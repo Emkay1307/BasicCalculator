@@ -1,0 +1,151 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Modern Calculator</title>
+  <link rel="stylesheet" href="style.css"/>
+</head>
+<body>
+    <button class="theme-toggle" onclick="toggleTheme()">🌙 / ☀️</button>
+
+  <div class="calculator-container">
+    <div class="calculator">
+      <div class="display-section">
+        <div id="equationDisplay" class="equation-display"></div>
+        <input type="text" id="inputBox" class="main-display" value="0" readonly/>
+      </div>
+
+      <div class="buttons-grid">
+        <!-- Row 1 -->
+        <button class="btn btn-function btn-delete" onclick="deleteBtnPressed()">⌫</button>
+        <button class="btn btn-function" onclick="percentBtnPressed()">%</button>
+        <button class="btn btn-function" onclick="operatorBtnPressed('/')">÷</button>
+        <button class="btn btn-operator" onclick="operatorBtnPressed('*')">×</button>
+
+        <!-- Row 2 -->
+        <button class="btn btn-digit" onclick="digitBtnPressed('7')">7</button>
+        <button class="btn btn-digit" onclick="digitBtnPressed('8')">8</button>
+        <button class="btn btn-digit" onclick="digitBtnPressed('9')">9</button>
+        <button class="btn btn-operator" onclick="operatorBtnPressed('-')">−</button>
+
+        <!-- Row 3 -->
+        <button class="btn btn-digit" onclick="digitBtnPressed('4')">4</button>
+        <button class="btn btn-digit" onclick="digitBtnPressed('5')">5</button>
+        <button class="btn btn-digit" onclick="digitBtnPressed('6')">6</button>
+        <button class="btn btn-operator" onclick="operatorBtnPressed('+')">+</button>
+
+        <!-- Row 4 -->
+        <button class="btn btn-digit" onclick="digitBtnPressed('1')">1</button>
+        <button class="btn btn-digit" onclick="digitBtnPressed('2')">2</button>
+        <button class="btn btn-digit" onclick="digitBtnPressed('3')">3</button>
+        <button class="btn btn-equals" onclick="equalBtnPressed()">=</button>
+
+        <!-- Row 5 -->
+        <button class="btn btn-function" onclick="btnACPressed()">AC</button>
+        <button class="btn btn-digit" onclick="digitBtnPressed('0')">0</button>
+        <button class="btn btn-digit" onclick="digitBtnPressed('.')">.</button>
+        <!-- No fourth button here because '=' spans this row -->
+      </div>
+    </div>
+  </div>
+
+  <script>
+    var newLine = true;
+    var value1;
+    var currentOperator;
+    var equationString = "";
+
+    function digitBtnPressed(button) {
+      if (newLine) {
+        document.getElementById("inputBox").value = button;
+        newLine = false;
+        if (equationString === "" || equationString.includes("=")) {
+          equationString = button;
+        } else {
+          equationString += button;
+        }
+      } else {
+        var currentValue = document.getElementById("inputBox").value;
+        if (button === '.' && currentValue.includes('.')) return;
+        document.getElementById("inputBox").value = currentValue + button;
+        equationString += button;
+      }
+      updateEquationDisplay();
+    }
+
+    function btnACPressed() {
+      document.getElementById("inputBox").value = "0";
+      newLine = true;
+      value1 = undefined;
+      currentOperator = undefined;
+      equationString = "";
+      updateEquationDisplay();
+    }
+
+    function deleteBtnPressed() {
+      var currentValue = document.getElementById("inputBox").value;
+      if (currentValue.length > 1) {
+        document.getElementById("inputBox").value = currentValue.slice(0, -1);
+        equationString = equationString.slice(0, -1);
+      } else {
+        document.getElementById("inputBox").value = "0";
+        equationString = "";
+        newLine = true;
+      }
+      updateEquationDisplay();
+    }
+
+    function percentBtnPressed() {
+      var currentValue = parseFloat(document.getElementById("inputBox").value);
+      var result = currentValue / 100;
+      document.getElementById("inputBox").value = result;
+      equationString = result.toString();
+      updateEquationDisplay();
+    }
+
+    function operatorBtnPressed(operator) {
+      currentOperator = operator;
+      value1 = parseFloat(document.getElementById("inputBox").value);
+      newLine = true;
+
+      if (equationString && !equationString.includes("=")) {
+        equationString += " " + operator + " ";
+        updateEquationDisplay();
+      }
+    }
+
+    function equalBtnPressed() {
+      var value2 = parseFloat(document.getElementById("inputBox").value);
+      var result;
+      switch (currentOperator) {
+        case '+': result = value1 + value2; break;
+        case '-': result = value1 - value2; break;
+        case '*': result = value1 * value2; break;
+        case '/': result = value2 === 0 ? 'Error' : value1 / value2; break;
+        default: result = 'Error';
+      }
+
+      if (typeof result === 'number') {
+        result = Math.round(result * 100000000) / 100000000;
+      }
+
+      equationString += " = " + result;
+      updateEquationDisplay();
+
+      document.getElementById("inputBox").value = result;
+      newLine = true;
+      value1 = undefined;
+      currentOperator = undefined;
+    }
+
+    function updateEquationDisplay() {
+      document.getElementById("equationDisplay").textContent = equationString;
+    }
+
+    function toggleTheme() {
+  document.body.classList.toggle('light-mode');
+}
+  </script>
+</body>
+</html>
