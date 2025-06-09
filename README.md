@@ -2,7 +2,6 @@
 
 A simple, responsive calculator with theme switching functionality built with HTML, CSS, and JavaScript.
 
-![Calculator Screenshot](screenshot.png) <!-- Add a screenshot later -->
 
 ## Features
 
